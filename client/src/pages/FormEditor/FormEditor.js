@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 
 
 const FormEditor = () => (
-  <Box className={styles.FormEditor} sx={{mt: 4}}>
+  <Box className={styles.FormEditor}>
     <FormComponents/>
   </Box>
 );

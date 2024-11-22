@@ -36,16 +36,19 @@ const postForm = async (req, res) => {
     //     .json({ errors: errors ? errors : 'Missing form Data' });
     // }
 
-    const newForm = new Form({
-      formName,
-      formData: formData,
-    });
 
-    savedForm = await newForm.save();
+    // console.log(req.body)
 
-    const token = jwt.sign({ savedForm }, secretKey, { expiresIn: '24h' });
+    // const newForm = new Form({
+    //   formName,
+    //   formData: formData,
+    // });
 
-    res.status(200).json(savedForm);
+    // savedForm = await newForm.save();
+
+    // const token = jwt.sign({ savedForm }, secretKey, { expiresIn: '24h' });
+
+    // res.status(200).json(savedForm);
   } catch (error) {
     console.log(err);
     res.status(500).json({ message: 'Server error', error: err });

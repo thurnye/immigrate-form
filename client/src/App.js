@@ -11,6 +11,7 @@ const Form = lazy(() => import('./pages/Forms/Forms'));
 const Login = lazy(() => import('./pages/Login/Login'));
 const Signup = lazy(() => import('./pages/Signup/Signup'));
 const FormEditor = lazy(() => import('./pages/FormEditor/FormEditor'));
+const SingleForm = lazy(() => import('./pages/SingleForm/SingleForm'));
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function App() {
   const privateRoutes = [
     { path: '/', element: <Form /> },
     { path: '/formBuilder', element: <FormEditor /> },
+    { path: '/form/:id', element: <SingleForm /> },
   ];
 
   console.log(user);

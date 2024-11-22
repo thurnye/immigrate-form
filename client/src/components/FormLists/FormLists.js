@@ -10,9 +10,7 @@ const FormLists = ({ formComponents }) => {
           ref={provided.innerRef}
           {...provided.droppableProps}
           flex="1"
-          border="1px solid #ddd"
           p={2}
-          borderRadius="4px"
         >
           <Typography variant="h6" mb={2}>Toolbox</Typography>
           {formComponents.map((item, index) => (

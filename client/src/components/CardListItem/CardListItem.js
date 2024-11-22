@@ -6,11 +6,18 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import styles from './CardListItem.module.css';
 import { getDateShort } from '../../utils/helperFunc';
+import { Link } from 'react-router-dom';
+
 
 export default function CardListItem({formItem}) {
   const {_id, formName, createdAt} = formItem
 
   return (
+    <Link
+    to={{
+      pathname: `/form/${_id}`
+    }}
+  >
     <Card sx={{width: '100%' }} className={styles.CardListItem}>
       <CardContent>
         <Typography variant="h5" component="div">
@@ -24,5 +31,6 @@ export default function CardListItem({formItem}) {
         <Button size="small">Learn More</Button>
       </CardActions>
     </Card>
+    </Link>
   );
 }

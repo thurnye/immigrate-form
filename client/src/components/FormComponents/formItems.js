@@ -8,7 +8,6 @@ export const formComponents = [
     type: 'inputs',
     label: 'Text Input',
     isPlaceholderAvailable: true,
-    options: undefined,
     attributes: {
       placeholder: true,
       required: true,
@@ -24,7 +23,8 @@ export const formComponents = [
     type: 'checkbox',
     label: 'Checkbox',
     isPlaceholderAvailable: false,
-    options: undefined,
+    options: [],
+    isGrouped: false
   },
   {
     id: getRandomInt().toString(),
@@ -43,6 +43,7 @@ export const formComponents = [
     label: 'Radio Buttons',
     isPlaceholderAvailable: false,
     options: [],
+    isGrouped: false
   },
   {
     id: getRandomInt().toString(),
@@ -51,6 +52,5 @@ export const formComponents = [
     type: 'date',
     label: 'Date Picker',
     isPlaceholderAvailable: false,
-    options: undefined,
   },
 ];

@@ -3,19 +3,20 @@ import {
   Box,
   Typography,
   TextField,
-  Checkbox,
   MenuItem,
   Select,
   Button,
 } from '@mui/material';
 import { Droppable } from 'react-beautiful-dnd';
 import Attributes from './Attributes';
-import DropDownSelect from '../DropDownSelect/DropDownSelect';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getRandomInt } from '../../utils/helperFunc';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
-const FormCanvas = forwardRef(({ formElements, updateElement }, ref) => {
+
+const FormCanvas = forwardRef(({ formElements, updateElement, removeElement }, ref) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   // Expose the validateForm function to the parent via the ref
@@ -44,6 +45,7 @@ const FormCanvas = forwardRef(({ formElements, updateElement }, ref) => {
   }));
 
   const addOption = (index) => {
+    console.log(formElements, index)
     const updatedOptions = [
       ...(formElements[index].options || []),
       `Option ${formElements[index].options.length + 1}`,
@@ -56,6 +58,9 @@ const FormCanvas = forwardRef(({ formElements, updateElement }, ref) => {
     updatedOptions.splice(optionIndex, 1);
     updateElement(index, 'options', updatedOptions);
   };
+
+
+  
 
   return (
     <Droppable droppableId='canvas'>
@@ -89,8 +94,23 @@ const FormCanvas = forwardRef(({ formElements, updateElement }, ref) => {
                 maxWidth: 500,
                 m: 'auto',
                 my: 3,
+                position: 'relative'
               }}
             >
+              <Box sx={{
+                position: 'absolute',
+                 top: 0,
+                 right: 0
+
+              }}>
+              <IconButton
+                  aria-label='delete'
+                  color='error'
+                  onClick={() => removeElement(index)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
               <Typography variant='body1' mb={1}>
                 {item.name}
               </Typography>
@@ -107,6 +127,65 @@ const FormCanvas = forwardRef(({ formElements, updateElement }, ref) => {
                   helperText={validationErrors[index]}
                 />
               </Box>
+              {(item.type === 'radio' || item.type === 'checkbox') && (<Box>
+                <FormControlLabel control={<Checkbox checked={item.isGrouped}  onChange={(e) =>
+                      updateElement(index, 'isGrouped', e.target.checked)
+                    }/>} label="Group items" />
+                     <>
+                  {item.isGrouped && <>
+                    <Box mt={2} sx={{ textAlign: 'end' }}>
+                      <Button
+                        variant='text'
+                        size='small'
+                        onClick={() => addOption(index)}
+                        sx={{
+                          textTransform: 'none',
+                        }}
+                      >
+                        {`Add ${item.type} labels`}
+                      </Button>
+                    </Box>
+                    <Box sx={{ mx: 2 }}>
+                      {item.options?.map((option, i) => (
+                        <Box
+                          key={getRandomInt()}
+                          display='flex'
+                          alignItems='center'
+                          mt={1}
+                        >
+                          <TextField
+                            value={option}
+                            onChange={(e) => {
+                              const updatedOptions = [...item.options];
+                              updatedOptions[i] = e.target.value;
+                              updateElement(index, 'options', updatedOptions);
+                            }}
+                            sx={{ width: '70%' }}
+                            size='small'
+                          />
+                          <Box>
+                            <IconButton
+                              aria-label='delete'
+                              color='error'
+                              onClick={() => removeOption(index, i)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                    {validationErrors[index] ===
+                      'At least one option is required for dropdown fields.' && (
+                      <Typography color='error' variant='caption'>
+                        At least one option is required.
+                      </Typography>
+                    )}
+                  </>}
+                </>
+              </Box>)}
+
+
 
               {item.type === 'dropdown' && (
                 <>
