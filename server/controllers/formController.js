@@ -118,7 +118,7 @@ const updateForm = async (req, res) => {
     }
 
     existingData.formName = formName;
-    existingData.formData = JSON.stringify(formData);
+    existingData.formData = formData;
 
     const updatedFormData = await existingData.save();
     return res.status(200).json(updatedFormData);

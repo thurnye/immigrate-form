@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef } from 'react';
 import styles from './FormComponents.module.css';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -19,13 +19,19 @@ export default function FormComponents() {
   const [formElements, setFormElements] = React.useState([]);
   const [formName, setFormName] = React.useState('');
   const user = useSelector((state) => state.userLog?.user?.user);
+
+  const canvasRef = useRef();
+
   const handleDragEnd = (result) => {
     const { source, destination, draggableId } = result;
 
     if (!destination) return;
 
     // Dragging from toolbox to canvas
-    if (source.droppableId === 'toolbox' && destination.droppableId === 'canvas') {
+    if (
+      source.droppableId === 'toolbox' &&
+      destination.droppableId === 'canvas'
+    ) {
       const newElement = formComponents.find((item) => item.id === draggableId);
       if (newElement) {
         setFormElements((prev) => [
@@ -33,9 +39,10 @@ export default function FormComponents() {
           {
             ...newElement,
             id: `${newElement.id}-${Date.now()}`,
-            placeholder: newElement.type === 'text' ? '' : undefined,
-            options: newElement.type === 'dropdown' || newElement.type === 'radio' ? [] : undefined,
-            required: false, // Default to not required when added to the canvas
+            options:
+              newElement.type === 'dropdown' || newElement.type === 'radio'
+                ? []
+                : undefined,
             validationMessage: '',
           },
         ]);
@@ -51,8 +58,8 @@ export default function FormComponents() {
     if (key === 'required' || key === 'placeholder' || key === 'label') {
       const element = updatedElements[index];
       if (element.required) {
-        console.log(element)
-        element.required = !element.required
+        console.log(element);
+        element.required = !element.required;
         // element.validationMessage = validateField(element);
       }
     }
@@ -61,31 +68,23 @@ export default function FormComponents() {
   };
 
   const handleSubmit = async () => {
-    try {
-      const result = await services.postSaveForm({
-        userId : user._id,
-        formName, 
-        formData: formElements
-      });
-
-      console.log(result)
-    } catch (error) {
-      console.log(error)
+    if (canvasRef.current?.validateForm()) {
+      try {
+        // console.log({
+        //   userId: user._id,
+        //   formName,
+        //   formData: formElements,
+        // });
+        const result = await services.postSaveForm({
+          userId : user._id,
+          formName,
+          formData: formElements
+        });
+        console.log(result)
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }
-
-
-  const validateField = (field) => {
-    if (field.required && !field.label.trim()) {
-      return 'Label is required.';
-    }
-    if (field.required && field.type === 'text' && !field.placeholder.trim()) {
-      return 'Placeholder is required.';
-    }
-    if (field.required && (field.type === 'dropdown' || field.type === 'radio') && (!field.options || field.options.length === 0)) {
-      return 'At least one option is required.';
-    }
-    return '';
   };
 
   return (
@@ -102,8 +101,8 @@ export default function FormComponents() {
               boxSizing: 'border-box',
             },
           }}
-          variant="permanent"
-          anchor="left"
+          variant='permanent'
+          anchor='left'
         >
           <Toolbar />
           <FormLists formComponents={formComponents} />
@@ -111,23 +110,31 @@ export default function FormComponents() {
 
         {/* Main Canvas Area */}
         <Box
-          component="main"
+          component='main'
           sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
         >
           <Toolbar />
-          <Box sx={{width: '100%'}}>
-          <TextField id="outlined-basic" label="Form Name" variant="outlined" fullWidth
-          value={formName}
-          onChange={(event) => {
-            setFormName(event.target.value);
-          }}/>
+          <Box sx={{ width: '100%' }}>
+            <TextField
+              id='outlined-basic'
+              label='Form Name'
+              variant='outlined'
+              fullWidth
+              value={formName}
+              onChange={(event) => {
+                setFormName(event.target.value);
+              }}
+            />
           </Box>
-          <Box sx={{textAlign: 'end'}}>
+          <Box sx={{ textAlign: 'end' }}>
             <Button onClick={() => handleSubmit()}>Save</Button>
-
           </Box>
           <Box>
-                <FormCanvas formElements={formElements} updateElement={updateElement} />
+            <FormCanvas
+              ref={canvasRef}
+              formElements={formElements}
+              updateElement={updateElement}
+            />
           </Box>
         </Box>
       </DragDropContext>
